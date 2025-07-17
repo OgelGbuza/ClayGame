@@ -50,6 +50,12 @@ Example battle setups are stored in `assets/scenes/`. The simple designer state
 (`scene_designer_state.py`) lets you drag sprites around and save a new template
 JSON file for later use.
 
+## High Scores
+Scores persist between runs in `highscore.txt`. The file is created
+automatically the first time you finish a game. A helper,
+`reset_high_score()`, is provided in `config.py` if you want to clear the
+recorded score without manually editing the file.
+
 The optional `voice_input.py` module demonstrates how to transcribe audio using
 the Whisper API, allowing future tools to create scenes from spoken commands.
 
