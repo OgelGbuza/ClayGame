@@ -1,0 +1,20 @@
+{
+  "quests": [
+    {
+      "quest_id": "Q1",
+      "description": "Discover the statue's secret",
+      "objectives": [
+        { "desc": "Examine the mysterious statue", "progress": 0, "goal": 1 }
+      ],
+      "rewards": { "experience": 100, "reputation": { "citizens": 5 } }
+    },
+    {
+      "quest_id": "Q2",
+      "description": "Retrieve the lost tome",
+      "objectives": [
+        { "desc": "Speak with the Old Sage", "progress": 0, "goal": 1 }
+      ],
+      "rewards": { "experience": 150, "reputation": { "citizens": 10 } }
+    }
+  ]
+}

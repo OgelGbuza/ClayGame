@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a90705e3-db4c-4cd7-9e56-f195b6772681" name="Changes" comment="some poster change">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/background.mp3" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2snuNmiWKuNs2CUfJVRRbJtABD5" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.ClayGame.executor": "Run",
+    "Python.generate_assets.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.narrative_cutscene_state.executor": "Debug",
+    "Python.resources.executor": "Run",
+    "Python.sprites.executor": "Debug",
+    "Python.states.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-a5bc9544c897-aa17d162503b-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-243.23654.177" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a90705e3-db4c-4cd7-9e56-f195b6772681" name="Changes" comment="" />
+      <created>1739103621772</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1739103621772</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Initial commit - game start">
+      <option name="closed" value="true" />
+      <created>1739104289056</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1739104289056</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Game end">
+      <option name="closed" value="true" />
+      <created>1739106564948</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1739106564948</updated>
+    </task>
+    <task id="LOCAL-00003" summary="3 lives">
+      <option name="closed" value="true" />
+      <created>1739107330321</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1739107330321</updated>
+    </task>
+    <task id="LOCAL-00004" summary="shoot">
+      <option name="closed" value="true" />
+      <created>1739107497092</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1739107497092</updated>
+    </task>
+    <task id="LOCAL-00005" summary="levels">
+      <option name="closed" value="true" />
+      <created>1739107735415</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1739107735415</updated>
+    </task>
+    <task id="LOCAL-00006" summary="score">
+      <option name="closed" value="true" />
+      <created>1739107866849</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1739107866849</updated>
+    </task>
+    <task id="LOCAL-00007" summary="explosion">
+      <option name="closed" value="true" />
+      <created>1739107985431</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1739107985431</updated>
+    </task>
+    <task id="LOCAL-00008" summary="many enemies">
+      <option name="closed" value="true" />
+      <created>1739108124517</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108124517</updated>
+    </task>
+    <task id="LOCAL-00009" summary="shield">
+      <option name="closed" value="true" />
+      <created>1739108248380</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108248380</updated>
+    </task>
+    <task id="LOCAL-00010" summary="boss">
+      <option name="closed" value="true" />
+      <created>1739108362849</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108362849</updated>
+    </task>
+    <task id="LOCAL-00011" summary="boss improved">
+      <option name="closed" value="true" />
+      <created>1739108475759</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108475759</updated>
+    </task>
+    <task id="LOCAL-00012" summary="scroll?">
+      <option name="closed" value="true" />
+      <created>1739108675330</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108675330</updated>
+    </task>
+    <task id="LOCAL-00013" summary="update">
+      <option name="closed" value="true" />
+      <created>1739108834769</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1739108834769</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Dialogue (Cutscene) State">
+      <option name="closed" value="true" />
+      <created>1739109731803</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1739109731803</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Player walk image">
+      <option name="closed" value="true" />
+      <created>1739110445371</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1739110445371</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Resources and their usage">
+      <option name="closed" value="true" />
+      <created>1739112185368</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1739112185368</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Fix scroll">
+      <option name="closed" value="true" />
+      <created>1739112595857</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1739112595857</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Some new resources and usage">
+      <option name="closed" value="true" />
+      <created>1739113831382</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1739113831382</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Several files">
+      <option name="closed" value="true" />
+      <created>1739115672552</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1739115672554</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Several files">
+      <option name="closed" value="true" />
+      <created>1739191407896</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1739191407896</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Fix start game">
+      <option name="closed" value="true" />
+      <created>1739194671572</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1739194671572</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Some errors fixed">
+      <option name="closed" value="true" />
+      <created>1739198068916</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1739198068916</updated>
+    </task>
+    <task id="LOCAL-00023" summary="improve assets">
+      <option name="closed" value="true" />
+      <created>1739199302062</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1739199302062</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fix shoot">
+      <option name="closed" value="true" />
+      <created>1739206108620</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1739206108620</updated>
+    </task>
+    <task id="LOCAL-00025" summary="refactor">
+      <option name="closed" value="true" />
+      <created>1739206923948</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1739206923948</updated>
+    </task>
+    <task id="LOCAL-00026" summary="some poster change">
+      <option name="closed" value="true" />
+      <created>1739207941839</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1739207941839</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
+    <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Initial commit - game start" />
+    <MESSAGE value="Game end" />
+    <MESSAGE value="3 lives" />
+    <MESSAGE value="shoot" />
+    <MESSAGE value="levels" />
+    <MESSAGE value="score" />
+    <MESSAGE value="explosion" />
+    <MESSAGE value="many enemies" />
+    <MESSAGE value="shield" />
+    <MESSAGE value="boss" />
+    <MESSAGE value="boss improved" />
+    <MESSAGE value="scroll?" />
+    <MESSAGE value="update" />
+    <MESSAGE value="Dialogue (Cutscene) State" />
+    <MESSAGE value="Player walk image" />
+    <MESSAGE value="Resources and their usage" />
+    <MESSAGE value="Fix scroll" />
+    <MESSAGE value="Some new resources and usage" />
+    <MESSAGE value="Several files" />
+    <MESSAGE value="Fix start game" />
+    <MESSAGE value="Some errors fixed" />
+    <MESSAGE value="improve assets" />
+    <MESSAGE value="fix shoot" />
+    <MESSAGE value="refactor" />
+    <MESSAGE value="some poster change" />
+    <option name="LAST_COMMIT_MESSAGE" value="some poster change" />
+  </component>
+</project>

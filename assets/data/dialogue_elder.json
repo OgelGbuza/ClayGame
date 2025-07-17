@@ -1,0 +1,8 @@
+{
+  "text": "Elder: Welcome, traveler. The ancient wisdom flows in these lands.\nDo you wish to know your destiny?",
+  "choices": {
+    "A": "Yes, I wish to learn.",
+    "B": "No, I prefer my own path."
+  },
+  "portrait": "elder_portrait.png"
+}
