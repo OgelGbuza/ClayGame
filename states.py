@@ -9,6 +9,7 @@ from sprites import (
     Explosion, ParallaxBackground, Fortress, Village
 )
 from resources import load_image_with_scale, get_asset_path
+from screenshot_utils import capture_screenshot
 
 logger = logging.getLogger(__name__) # Set up logger for this module
 
@@ -572,6 +573,9 @@ class PlayingState:
                     # Toggle debug overlay when F3 is pressed
                     self.show_debug_info = not self.show_debug_info
                     logger.debug(f"Debug overlay toggled to {self.show_debug_info}")
+                elif event.key == pygame.K_F12:
+                    path = capture_screenshot(self.screen)
+                    logger.info(f"Screenshot saved to {path}")
         return None # No state change
 
     def _fire_projectile(self):
