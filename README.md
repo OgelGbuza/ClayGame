@@ -16,6 +16,8 @@ Run the game using:
 python main.py
 ```
 
+Press `F11` while the game is running to toggle fullscreen. The main menu now shows your saved high score.
+
 ## Development
 
 Compiled Python files (`__pycache__`) and IDE settings are ignored using `.gitignore`. Feel free to open issues or pull requests with improvements.

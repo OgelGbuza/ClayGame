@@ -98,6 +98,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     pygame.display.set_caption("Pixel War: Multiverse Battle")
+    fullscreen = False
 
     # Start with MainMenu.
     menu_state = MainMenu(screen)
@@ -116,6 +117,14 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+                fullscreen = not fullscreen
+                if fullscreen:
+                    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+                else:
+                    screen = pygame.display.set_mode((800, 600))
+                for s in manager.states:
+                    s.screen = screen
 
         # Debug: check if Enter key is pressed.
         keys = pygame.key.get_pressed()
