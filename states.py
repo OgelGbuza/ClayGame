@@ -186,6 +186,7 @@ class MainMenu:
         """
         self.screen = screen
         self.font = pygame.font.SysFont("arial", 32) # Font for menu text
+        self.high_score = load_high_score()  # Show stored high score
         logger.debug("MainMenu initialized.")
 
     def process_events(self, events: list[pygame.event.Event]) -> str | None:
@@ -220,9 +221,15 @@ class MainMenu:
         Draws the main menu title and instructions on the screen.
         """
         self.screen.fill((0, 0, 0)) # Black background
-        title_surface = self.font.render("Main Menu - Press ENTER to start", True, (255, 255, 255)) # Render title text
-        title_rect = title_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2)) # Center title
-        self.screen.blit(title_surface, title_rect) # Draw title
+        title_surface = self.font.render("Main Menu - Press ENTER to start", True, (255, 255, 255))
+        title_rect = title_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2))
+        self.screen.blit(title_surface, title_rect)
+
+        hs_text = f"High Score: {self.high_score}"
+        hs_surface = self.font.render(hs_text, True, (255, 255, 0))
+        hs_rect = hs_surface.get_rect(center=(self.screen.get_width() // 2, self.screen.get_height() // 2 + 40))
+        self.screen.blit(hs_surface, hs_rect)
+
         pygame.display.flip() # Update display
 
 
