@@ -1,0 +1,9 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore IDE settings
+.idea/
+
+# Ignore generated assets or other binary files? not necessary maybe
