@@ -21,6 +21,10 @@ python main.py
 The game opens with a short cutscene and then drops you into a basic battle
 scenario.  Use the arrow keys to move and space to advance dialogue.
 
+## Debugging
+Press **F3** during gameplay to toggle an overlay showing the current FPS and
+player position. This can help when tuning sprite behavior or level layouts.
+
 ## Asset Generation
 The repository includes a script, `generate_assets.py`, which creates placeholder
 sprites and other resources.  Run it if you wish to regenerate the sample images

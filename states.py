@@ -169,7 +169,6 @@ class DialogueState:
         pygame.display.flip() # Update display
         self.clock.tick(60) # Limit FPS
 
-
 # ------------------------------
 # MainMenu
 # ------------------------------
@@ -337,8 +336,9 @@ class SettingsState:
         for rendered_option, option_rect in self.rendered_options: # Draw each option
             self.screen.blit(rendered_option, option_rect)
         self.screen.blit(self.instructions_surface, self.instructions_rect) # Draw instructions
-        pygame.display.flip() # Update display
-        self.clock.tick(60) # Limit FPS
+# Update display and maintain frame rate
+        pygame.display.flip()
+        self.clock.tick(60)
 
 
 # ------------------------------
@@ -489,6 +489,7 @@ class PlayingState:
         self.powerup_spawn_timer_ms = 0 # Timer for power-up spawning
         self.powerup_spawn_interval_ms = 600 * (1000/60) # Power-up spawn interval in milliseconds (frames to ms)
         self._load_music_and_sounds() # Load background music and sound effects
+        self.show_debug_info = False  # Toggle for debug overlay
         logger.debug("PlayingState initialized.")
 
 
@@ -567,6 +568,10 @@ class PlayingState:
                     return STATE_SETTINGS # Open settings on 'O' press
                 elif event.key == pygame.K_SPACE:
                     self._fire_projectile() # Fire projectile on Space press
+                elif event.key == pygame.K_F3:
+                    # Toggle debug overlay when F3 is pressed
+                    self.show_debug_info = not self.show_debug_info
+                    logger.debug(f"Debug overlay toggled to {self.show_debug_info}")
         return None # No state change
 
     def _fire_projectile(self):
@@ -838,6 +843,8 @@ class PlayingState:
         self._draw_ui() # Draw score, level, lives
         self._draw_shield_indicator() # Draw shield visual indicator if active
         self._draw_boss_health_bars() # Draw boss health bars
+        if self.show_debug_info:
+            self._draw_debug_info()
 
 
     def _draw_ui(self):
@@ -882,6 +889,13 @@ class PlayingState:
 
         pygame.display.flip() # Update display
         self.clock.tick(60) # Limit FPS
+
+    def _draw_debug_info(self):
+        """Draw the FPS and player position for debugging."""
+        fps_text = self.font.render(f"FPS: {self.clock.get_fps():.1f}", True, (255, 255, 0))
+        pos_text = self.font.render(f"Pos: {self.soldier.rect.center}", True, (255, 255, 0))
+        self.screen.blit(fps_text, (10, 40))
+        self.screen.blit(pos_text, (10, 60))
 
 
 # ------------------------------
