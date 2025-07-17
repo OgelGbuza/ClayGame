@@ -43,6 +43,11 @@ def save_high_score(score):
         print(f"Error saving high score: {e}")
 
 
+def reset_high_score() -> None:
+    """Reset the stored high score to zero."""
+    save_high_score(0)
+
+
 # Game state constants - used by the state manager to control game flow
 STATE_MENU = "menu"
 STATE_PLAYING = "playing"
