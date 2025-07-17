@@ -1,16 +1,35 @@
 # ====================== File: main.py (Modified State Transition) ======================
-import pygame, sys, logging
-from config import *
-from states import MainMenu, PlayingState  # Ensure these are defined in your states module
+import pygame
+import sys
+import logging
+
+from config import (
+    STATE_MENU,
+    STATE_PLAYING,
+    STATE_PAUSED,
+    STATE_SETTINGS,
+    STATE_UPGRADE,
+    STATE_GAMEOVER,
+    STATE_DIALOGUE,
+    STATE_PUTIN_CUTSCENE,
+    STATE_QUIT,
+)
+
+from states import (
+    MainMenu,
+    PlayingState,
+    PauseState,
+    SettingsState,
+    UpgradeState,
+    GameOverState,
+    DialogueState,
+    PutinCutsceneState,
+)
 from skill_tree_state import SkillTreeState
 from narrative_cutscene_state import NarrativeCutsceneState
 from dialogue_journal_state import DialogueJournalState
 from state_manager import StateManager
 from save_load import save_game, load_game
-from settings_state import SettingsState
-from inventory_state import InventoryState
-from quest_journal_state import QuestJournalState
-from pause_state import PauseState
 from level_manager import LevelManager
 
 import resources
@@ -33,6 +52,47 @@ def fade_transition(screen, duration=500):
         pygame.display.flip()
         clock.tick(60)
 
+
+def handle_state_transitions(manager, screen, result):
+    """Handle state changes based on the result string returned by states."""
+    if result is None:
+        return
+    if result == STATE_QUIT:
+        pygame.quit()
+        sys.exit()
+
+    current = manager.current_state()
+
+    if result == STATE_PLAYING:
+        # If coming from pause/settings/upgrade, simply pop to resume
+        if isinstance(current, (PauseState, SettingsState, UpgradeState, GameOverState)):
+            manager.pop_state()
+        else:
+            # Starting the actual game from menu or cutscene
+            manager.states.clear()
+            playing_state = PlayingState(screen)
+            manager.push_state(playing_state)
+            fade_transition(screen)
+    elif result == STATE_PAUSED:
+        pause_state = PauseState(screen, current)
+        manager.push_state(pause_state)
+    elif result == STATE_SETTINGS:
+        settings_state = SettingsState(screen, current)
+        manager.push_state(settings_state)
+    elif result == STATE_UPGRADE:
+        upgrade_state = UpgradeState(screen, current)
+        manager.push_state(upgrade_state)
+    elif result == STATE_GAMEOVER:
+        score = getattr(current, "score", 0)
+        gameover_state = GameOverState(screen, score)
+        manager.push_state(gameover_state)
+    elif result == STATE_MENU:
+        manager.states.clear()
+        manager.push_state(MainMenu(screen))
+    elif result == STATE_DIALOGUE:
+        manager.push_state(DialogueState(screen))
+    elif result == STATE_PUTIN_CUTSCENE:
+        manager.push_state(PutinCutsceneState(screen))
 
 def main():
     pygame.init()
@@ -72,15 +132,15 @@ def main():
         manager.current_state().update()
         manager.current_state().draw()
 
-        # When the state signals "playing", we want to transition into the game.
-        if result == "playing":
-            # Clear all states (i.e. remove MainMenu and the cutscene)
-            manager.states.clear()
-            # Push a new PlayingState
-            from states import PlayingState  # Make sure PlayingState is defined in your states module
-            playing_state = PlayingState(screen)
-            manager.push_state(playing_state)
-            fade_transition(screen)
+        # Handle direct results from process_events
+        handle_state_transitions(manager, screen, result)
+
+        # Some states signal transitions via a `next_state` attribute (e.g. PlayingState)
+        current = manager.current_state()
+        next_state = getattr(current, "next_state", STATE_PLAYING)
+        if isinstance(current, PlayingState) and next_state != STATE_PLAYING:
+            current.next_state = STATE_PLAYING
+            handle_state_transitions(manager, screen, next_state)
 
         pygame.time.delay(10)
 
