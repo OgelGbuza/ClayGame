@@ -1,16 +1,45 @@
 # sprites.py
-import pygame, math
+import pygame, math, random
+import numpy as np
 from resources import load_image_with_scale, load_sprite_sheet, get_asset_path
 import config
+
+# Helper to add slight noise to a surface so sprites look a bit more like
+# handcrafted clay models.
+def apply_clay_effect(surface: pygame.Surface):
+    arr = pygame.surfarray.pixels3d(surface)
+    noise = np.random.randint(-5, 6, arr.shape, dtype=np.int16)
+    np.add(arr, noise, out=arr, casting="unsafe")
+    np.clip(arr, 0, 255, out=arr)
+    del arr
+
+
+class ClaySprite(pygame.sprite.Sprite):
+    """Base sprite class that applies small frame jitter."""
+
+    def __init__(self):
+        super().__init__()
+        self._jitter = pygame.math.Vector2(0, 0)
+
+    def apply_jitter(self, magnitude: int = 1):
+        # remove previous jitter then apply a new random offset
+        self.rect.move_ip(-self._jitter.x, -self._jitter.y)
+        self._jitter.xy = (
+            random.randint(-magnitude, magnitude),
+            random.randint(-magnitude, magnitude),
+        )
+        self.rect.move_ip(self._jitter.x, self._jitter.y)
 
 # ------------------------------
 # AnimatedSprite Base Class
 # ------------------------------
-class AnimatedSprite(pygame.sprite.Sprite):
+class AnimatedSprite(ClaySprite):
     def __init__(self, image_path, frame_width, frame_height, num_frames, animation_speed=150):
         super().__init__()
         # load_sprite_sheet returns a list of frames directly.
         self.frames = load_sprite_sheet(image_path, frame_width, frame_height, num_frames)
+        for f in self.frames:
+            apply_clay_effect(f)
         self.current_frame = 0
         self.image = self.frames[self.current_frame]
         self.rect = self.image.get_rect()

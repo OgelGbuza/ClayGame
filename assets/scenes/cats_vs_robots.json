@@ -1,0 +1,9 @@
+{
+  "objects": [
+    {"type": "tree", "position": [100, 200]},
+    {"type": "rock", "position": [300, 380]}
+  ],
+  "npcs": [
+    {"type": "elder", "position": [150, 250]}
+  ]
+}

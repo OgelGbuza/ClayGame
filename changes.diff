@@ -1,0 +1,667 @@
+diff --git a/README.md b/README.md
+index 691f7a5..eb0521e 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,51 @@
+-# ClayGame
+\ No newline at end of file
++# ClayGame
++
++ClayGame is a small experimental project that mixes turn‑based strategy with a
++comedic claymation art style.  Players control heroic animal soldiers defending
++the fictional land of Clayonia from bumbling invaders.  Most art assets are
++generated or processed to look like stop‑motion clay figures.
++
++## Installation
++1. Ensure Python 3.10+ is installed.
++2. Install dependencies:
++   ```bash
++   pip install -r requirements.txt
++   ```
++
++## Running the Game
++Execute the main entry point:
++```bash
++python main.py
++```
++
++The game opens with a short cutscene and then drops you into a basic battle
++scenario.  Use the arrow keys to move and space to advance dialogue.
++
++## Asset Generation
++The repository includes a script, `generate_assets.py`, which creates placeholder
++sprites and other resources.  Run it if you wish to regenerate the sample images
++located in the `assets/` folder:
++
++```bash
++python generate_assets.py
++```
++
++Generated files will appear under `assets/`.
++
++For custom clay-style artwork you can also use the GUI in `tools/clay_generator_gui.py`:
++
++```bash
++python tools/clay_generator_gui.py
++```
++
++This tool can call a local Stable Diffusion model or the DALL·E API (requires an
++OpenAI API key) to generate new sprites.
++
++## Scene Templates
++Example battle setups are stored in `assets/scenes/`. The simple designer state
++(`scene_designer_state.py`) lets you drag sprites around and save a new template
++JSON file for later use.
++
++The optional `voice_input.py` module demonstrates how to transcribe audio using
++the Whisper API, allowing future tools to create scenes from spoken commands.
++
++## Mini-Game
++`minigame_state.py` contains a very small turn-based skirmish prototype where
++cats and invaders take alternating moves on a grid. It serves as a foundation
++for more advanced clay battles.
++
++---
++This project is still a work in progress and does not yet represent a full game.
++Contributions are welcome.
+diff --git a/assets/scenes/cats_vs_robots.json b/assets/scenes/cats_vs_robots.json
+new file mode 100644
+index 0000000..65cd318
+--- /dev/null
++++ b/assets/scenes/cats_vs_robots.json
+@@ -0,0 +1,9 @@
++{
++  "objects": [
++    {"type": "tree", "position": [100, 200]},
++    {"type": "rock", "position": [300, 380]}
++  ],
++  "npcs": [
++    {"type": "elder", "position": [150, 250]}
++  ]
++}
+diff --git a/minigame_state.py b/minigame_state.py
+new file mode 100644
+index 0000000..d09018a
+--- /dev/null
++++ b/minigame_state.py
+@@ -0,0 +1,62 @@
++"""Very small turn-based skirmish mode used as a proof of concept."""
++
++import pygame
++from sprites import ClaySoldier, EnemyUnit
++
++GRID_SIZE = 64
++GRID_WIDTH = 5
++GRID_HEIGHT = 5
++
++
++class MiniGameState:
++    def __init__(self, screen: pygame.Surface):
++        self.screen = screen
++        self.clock = pygame.time.Clock()
++        self.player = ClaySoldier((GRID_SIZE // 2, GRID_SIZE // 2))
++        self.enemy = EnemyUnit((GRID_SIZE * 4, GRID_SIZE * 4))
++        self.turn = "player"
++
++    def process_events(self, events):
++        for event in events:
++            if event.type == pygame.QUIT:
++                return "quit"
++            if self.turn == "player" and event.type == pygame.KEYDOWN:
++                if event.key == pygame.K_UP:
++                    self.player.rect.y = max(0, self.player.rect.y - GRID_SIZE)
++                    self.turn = "enemy"
++                elif event.key == pygame.K_DOWN:
++                    self.player.rect.y = min(GRID_SIZE*(GRID_HEIGHT-1), self.player.rect.y + GRID_SIZE)
++                    self.turn = "enemy"
++                elif event.key == pygame.K_LEFT:
++                    self.player.rect.x = max(0, self.player.rect.x - GRID_SIZE)
++                    self.turn = "enemy"
++                elif event.key == pygame.K_RIGHT:
++                    self.player.rect.x = min(GRID_SIZE*(GRID_WIDTH-1), self.player.rect.x + GRID_SIZE)
++                    self.turn = "enemy"
++        return None
++
++    def update(self):
++        if self.turn == "enemy":
++            # simple enemy AI: move towards player one step
++            if self.enemy.rect.x < self.player.rect.x:
++                self.enemy.rect.x += GRID_SIZE
++            elif self.enemy.rect.x > self.player.rect.x:
++                self.enemy.rect.x -= GRID_SIZE
++            elif self.enemy.rect.y < self.player.rect.y:
++                self.enemy.rect.y += GRID_SIZE
++            elif self.enemy.rect.y > self.player.rect.y:
++                self.enemy.rect.y -= GRID_SIZE
++            self.turn = "player"
++        self.player.update(pygame.key.get_pressed())
++        self.enemy.update()
++
++    def draw(self):
++        self.screen.fill((50, 50, 50))
++        for y in range(GRID_HEIGHT):
++            for x in range(GRID_WIDTH):
++                rect = pygame.Rect(x*GRID_SIZE, y*GRID_SIZE, GRID_SIZE, GRID_SIZE)
++                pygame.draw.rect(self.screen, (80, 80, 80), rect, 1)
++        self.screen.blit(self.player.image, self.player.rect)
++        self.screen.blit(self.enemy.image, self.enemy.rect)
++        pygame.display.flip()
++        self.clock.tick(60)
+diff --git a/requirements.txt b/requirements.txt
+new file mode 100644
+index 0000000..0c5cf8f
+--- /dev/null
++++ b/requirements.txt
+@@ -0,0 +1,7 @@
++pygame>=2.0
++numpy
++Pillow
++requests
++openai
++diffusers
++torch
+diff --git a/scene_designer_state.py b/scene_designer_state.py
+new file mode 100644
+index 0000000..0f960f6
+--- /dev/null
++++ b/scene_designer_state.py
+@@ -0,0 +1,71 @@
++"""Basic drag-and-drop scene designer.
++
++This state lets the user arrange sprite objects and save the result
++as a scene template under ``assets/scenes``. It is intentionally
++simple but provides a starting point for more advanced tools."""
++
++import json
++import pygame
++from sprites import PropagandaPoster, ClaySoldier
++
++
++class SceneDesignerState:
++    def __init__(self, screen: pygame.Surface, template: str | None = None):
++        self.screen = screen
++        self.clock = pygame.time.Clock()
++        self.sprites = pygame.sprite.Group()
++        if template:
++            self.load_template(template)
++        self.dragged = None
++
++    def load_template(self, name: str):
++        path = f"assets/scenes/{name}.json"
++        try:
++            data = json.load(open(path))
++        except FileNotFoundError:
++            data = {}
++        for obj in data.get("objects", []):
++            if obj["type"] == "poster":
++                sprite = PropagandaPoster(obj["position"])
++                self.sprites.add(sprite)
++        for npc in data.get("npcs", []):
++            sprite = ClaySoldier(npc["position"])
++            self.sprites.add(sprite)
++
++    def save_template(self, name: str):
++        data = {"objects": [], "npcs": []}
++        for sprite in self.sprites:
++            if isinstance(sprite, PropagandaPoster):
++                data["objects"].append({"type": "poster", "position": list(sprite.rect.topleft)})
++            elif isinstance(sprite, ClaySoldier):
++                data["npcs"].append({"type": "soldier", "position": list(sprite.rect.topleft)})
++        with open(f"assets/scenes/{name}.json", "w") as f:
++            json.dump(data, f, indent=2)
++
++    def process_events(self, events):
++        for event in events:
++            if event.type == pygame.QUIT:
++                return "quit"
++            if event.type == pygame.MOUSEBUTTONDOWN:
++                for sprite in reversed(self.sprites.sprites()):
++                    if sprite.rect.collidepoint(event.pos):
++                        self.dragged = sprite
++                        break
++                else:
++                    # add a poster where clicked
++                    poster = PropagandaPoster(event.pos)
++                    self.sprites.add(poster)
++            if event.type == pygame.MOUSEBUTTONUP:
++                self.dragged = None
++        if self.dragged:
++            self.dragged.rect.center = pygame.mouse.get_pos()
++        return None
++
++    def update(self):
++        self.sprites.update()
++
++    def draw(self):
++        self.screen.fill((30, 30, 30))
++        self.sprites.draw(self.screen)
++        pygame.display.flip()
++        self.clock.tick(60)
+diff --git a/sprites.py b/sprites.py
+index 0da49a4..96eac31 100644
+--- a/sprites.py
++++ b/sprites.py
+@@ -1,16 +1,45 @@
+ # sprites.py
+-import pygame, math
++import pygame, math, random
++import numpy as np
+ from resources import load_image_with_scale, load_sprite_sheet, get_asset_path
+ import config
+ 
++# Helper to add slight noise to a surface so sprites look a bit more like
++# handcrafted clay models.
++def apply_clay_effect(surface: pygame.Surface):
++    arr = pygame.surfarray.pixels3d(surface)
++    noise = np.random.randint(-5, 6, arr.shape, dtype=np.int16)
++    np.add(arr, noise, out=arr, casting="unsafe")
++    np.clip(arr, 0, 255, out=arr)
++    del arr
++
++
++class ClaySprite(pygame.sprite.Sprite):
++    """Base sprite class that applies small frame jitter."""
++
++    def __init__(self):
++        super().__init__()
++        self._jitter = pygame.math.Vector2(0, 0)
++
++    def apply_jitter(self, magnitude: int = 1):
++        # remove previous jitter then apply a new random offset
++        self.rect.move_ip(-self._jitter.x, -self._jitter.y)
++        self._jitter.xy = (
++            random.randint(-magnitude, magnitude),
++            random.randint(-magnitude, magnitude),
++        )
++        self.rect.move_ip(self._jitter.x, self._jitter.y)
++
+ # ------------------------------
+ # AnimatedSprite Base Class
+ # ------------------------------
+-class AnimatedSprite(pygame.sprite.Sprite):
++class AnimatedSprite(ClaySprite):
+     def __init__(self, image_path, frame_width, frame_height, num_frames, animation_speed=150):
+         super().__init__()
+         # load_sprite_sheet returns a list of frames directly.
+         self.frames = load_sprite_sheet(image_path, frame_width, frame_height, num_frames)
++        for f in self.frames:
++            apply_clay_effect(f)
+         self.current_frame = 0
+         self.image = self.frames[self.current_frame]
+         self.rect = self.image.get_rect()
+@@ class AnimatedSprite(pygame.sprite.Sprite):
+             self.current_frame = (self.current_frame + 1) % len(self.frames)
+             self.image = self.frames[self.current_frame]
+             self.last_update = now
++        self.apply_jitter()
++        self.apply_jitter()
+ 
+ # ------------------------------
+ # ClaySoldier (Player)
+ # ------------------------------
+-class ClaySoldier(pygame.sprite.Sprite):
++class ClaySoldier(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         # Load idle frames from "player_idle.png" (4 frames, each 50x50)
+         self.frames = load_sprite_sheet("player_idle.png", 50, 50, 4)
++        for f in self.frames:
++            apply_clay_effect(f)
+         self.current_frame = 0
+         self.image = self.frames[self.current_frame]
+         self.rect = self.image.get_rect(center=pos)
+@@ class ClaySoldier(pygame.sprite.Sprite):
+ # ------------------------------
+ # EnemyUnit (Static Russian Invader)
+ # ------------------------------
+-class EnemyUnit(pygame.sprite.Sprite):
++class EnemyUnit(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = pygame.Surface((50,50))
+         self.image.fill((255,0,0))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.base_speed = 3
+         self.speed = self.base_speed
+@@ class EnemyUnit(pygame.sprite.Sprite):
+         self.rect.x += self.speed * self.direction
+         if self.rect.right >= 800 or self.rect.left <= 0:
+             self.direction *= -1
++        self.apply_jitter()
+ 
+ # ------------------------------
+ # BossEnemy (Boss)
+ # ------------------------------
+-class BossEnemy(pygame.sprite.Sprite):
++class BossEnemy(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = pygame.Surface((80,80))
+         self.image.fill((128,0,128))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.base_speed = 2
+         self.speed = self.base_speed
+@@ class BossEnemy(pygame.sprite.Sprite):
+         self.rect.x += self.speed * self.direction
+         if self.rect.right >= 800 or self.rect.left <= 0:
+             self.direction *= -1
++        self.apply_jitter()
+ 
+ # ------------------------------
+ # AnimatedEnemy (Animated Russian Invader)
+@@ class AnimatedEnemy(AnimatedSprite):
+         if self.rect.right >= 800 or self.rect.left <= 0:
+             self.direction *= -1
+         self.update_animation()
++        self.apply_jitter()
+ 
+ # ------------------------------
+ # Drone (Futuristic Ukrainian Drone)
+ # ------------------------------
+-class Drone(pygame.sprite.Sprite):
++class Drone(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = load_image_with_scale("drone.png", (40,40))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.speed = 3
+         self.amplitude = 20
+@@ class Drone(pygame.sprite.Sprite):
+         self.rect.y = self.start_y + self.amplitude * math.sin(self.frequency * self.counter)
+         if self.rect.left > 800:
+             self.rect.right = 0
++        self.apply_jitter()
+ 
+ # ------------------------------
+ # PropagandaPoster (War Propaganda Parody)
+ # ------------------------------
+-class PropagandaPoster(pygame.sprite.Sprite):
++class PropagandaPoster(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = load_image_with_scale("propaganda_poster.png", (100,150))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+ 
++    def update(self):
++        self.apply_jitter()
++
+ # ------------------------------
+ # Projectile (Fired by Player)
+ # ------------------------------
+-class Projectile(pygame.sprite.Sprite):
++class Projectile(ClaySprite):
+     def __init__(self, pos, speed=10):
+         super().__init__()
+         try:
+@@ class Projectile(pygame.sprite.Sprite):
+             print("Error loading projectile image:", e)
+             self.image = pygame.Surface((10,20), pygame.SRCALPHA)
+             self.image.fill((0,0,255))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.speed = speed
+ 
+@@ class Projectile(pygame.sprite.Sprite):
+         # print("Projectile at:", self.rect)
+         if self.rect.bottom < 0:
+             self.kill()
++        else:
++            self.apply_jitter()
+ 
+ # ------------------------------
+ # BossProjectile (Fired by Boss)
+ # ------------------------------
+-class BossProjectile(pygame.sprite.Sprite):
++class BossProjectile(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = pygame.Surface((15,15), pygame.SRCALPHA)
+         pygame.draw.circle(self.image, (255,255,0), (7,7), 7)
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.speed = 7
+ 
+@@ class BossProjectile(pygame.sprite.Sprite):
+         self.rect.y += self.speed
+         if self.rect.top > 600:
+             self.kill()
++        else:
++            self.apply_jitter()
+ 
+ # ------------------------------
+ # PowerUp (Extra Life)
+ # ------------------------------
+-class PowerUp(pygame.sprite.Sprite):
++class PowerUp(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = pygame.Surface((30,30))
+         self.image.fill((0,255,0))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.speed = 2
+ 
+@@ class PowerUp(pygame.sprite.Sprite):
+         self.rect.y += self.speed
+         if self.rect.top > 600:
+             self.kill()
++        else:
++            self.apply_jitter()
+ 
+ # ------------------------------
+ # ShieldPowerUp (Temporary Shield)
+@@
+     def __init__(self, pos):
+         super().__init__(pos)
+         self.image.fill((0,255,255))
++        apply_clay_effect(self.image)
+ 
+ # ------------------------------
+ # Explosion (Visual Effect)
+ # ------------------------------
+-class Explosion(pygame.sprite.Sprite):
++class Explosion(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.frame = 0
+         self.max_frames = 20
+         self.image = pygame.Surface((50,50), pygame.SRCALPHA)
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+         self.update_image()
+ 
+@@ class Explosion(pygame.sprite.Sprite):
+         self.update_image()
+         if self.frame >= self.max_frames:
+             self.kill()
++        else:
++            self.apply_jitter()
+ 
+ # ------------------------------
+ # ParallaxBackground (Scrolling Background)
+@@
+ # ------------------------------
+ # Fortress (Strategic Building)
+ # ------------------------------
+-class Fortress(pygame.sprite.Sprite):
++class Fortress(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = load_image_with_scale("fortress.png", (200,150))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+ 
++    def update(self):
++        self.apply_jitter()
++
+ # ------------------------------
+ # Village (Additional Building)
+ # ------------------------------
+-class Village(pygame.sprite.Sprite):
++class Village(ClaySprite):
+     def __init__(self, pos):
+         super().__init__()
+         self.image = load_image_with_scale("village.png", (150,100))
++        apply_clay_effect(self.image)
+         self.rect = self.image.get_rect(center=pos)
+ 
++    def update(self):
++        self.apply_jitter()
+diff --git a/tools/clay_generator_gui.py b/tools/clay_generator_gui.py
+new file mode 100644
+index 0000000..a79819d
+--- /dev/null
++++ b/tools/clay_generator_gui.py
+@@ -0,0 +1,121 @@
++"""Claymation image generator GUI.
++
++This tool can create clay-style images using either a local Stable Diffusion
++model (via the diffusers library) or the OpenAI DALL·E API. It is meant as a
++helper for producing new sprites for the game."""
++
++import tkinter as tk
++from tkinter import filedialog, messagebox
++
++try:
++    import torch
++    from diffusers import StableDiffusionPipeline
++except ImportError:  # pragma: no cover - optional
++    StableDiffusionPipeline = None
++
++try:
++    import openai
++    import requests
++    from PIL import Image, ImageTk
++except ImportError:  # pragma: no cover - optional
++    openai = None
++    Image = None
++
++DEVICE = "cuda" if StableDiffusionPipeline and torch.cuda.is_available() else "cpu"
++_sd_pipe = None
++
++
++def load_sd():
++    global _sd_pipe
++    if _sd_pipe is None and StableDiffusionPipeline is not None:
++        _sd_pipe = StableDiffusionPipeline.from_pretrained(
++            "runwayml/stable-diffusion-v1-5", torch_dtype=torch.float16
++        )
++        _sd_pipe.to(DEVICE)
++    return _sd_pipe
++
++
++def sd_image(prompt: str, steps: int):
++    pipe = load_sd()
++    if pipe is None:
++        raise RuntimeError("Stable Diffusion not available")
++    full_prompt = (
++        "Claymation-style, handcrafted stop-motion aesthetic, " + prompt
++    )
++    return pipe(full_prompt, num_inference_steps=steps).images[0]
++
++
++def dalle_image(prompt: str):
++    if openai is None:
++        raise RuntimeError("OpenAI package not available")
++    full_prompt = (
++        "Claymation-style, handcrafted stop-motion aesthetic, " + prompt
++    )
++    resp = openai.Image.create(prompt=full_prompt, n=1, size="512x512")
++    url = resp["data"][0]["url"]
++    img = Image.open(requests.get(url, stream=True).raw)
++    return img
++
++
++class GeneratorApp:
++    def __init__(self, master: tk.Tk):
++        self.master = master
++        master.title("Clay Generator")
++
++        tk.Label(master, text="Prompt:").pack()
++        self.prompt = tk.Text(master, height=3, width=40)
++        self.prompt.pack()
++
++        self.model = tk.StringVar(value="sd")
++        frame = tk.Frame(master)
++        frame.pack()
++        tk.Radiobutton(frame, text="Stable Diffusion", variable=self.model, value="sd").pack(side=tk.LEFT)
++        tk.Radiobutton(frame, text="DALL·E", variable=self.model, value="dalle").pack(side=tk.LEFT)
++
++        tk.Label(master, text="Steps (SD only)").pack()
++        self.steps = tk.Scale(master, from_=10, to=100, orient="horizontal")
++        self.steps.set(50)
++        self.steps.pack()
++
++        tk.Button(master, text="Generate", command=self.generate).pack(pady=5)
++        self.canvas = tk.Canvas(master, width=256, height=256, bg="gray")
++        self.canvas.pack()
++        self.save_btn = tk.Button(master, text="Save", state=tk.DISABLED, command=self.save)
++        self.save_btn.pack(pady=5)
++        self.image = None
++
++    def generate(self):
++        prompt = self.prompt.get("1.0", tk.END).strip()
++        try:
++            if self.model.get() == "sd":
++                self.image = sd_image(prompt, self.steps.get())
++            else:
++                self.image = dalle_image(prompt)
++        except Exception as exc:  # pragma: no cover - runtime depends on libs
++            messagebox.showerror("Error", str(exc))
++            return
++
++        img = self.image.copy()
++        img.thumbnail((256, 256))
++        self.tk_img = ImageTk.PhotoImage(img)
++        self.canvas.create_image(128, 128, image=self.tk_img)
++        self.canvas.image = self.tk_img
++        self.save_btn.config(state=tk.NORMAL)
++
++    def save(self):
++        if self.image is None:
++            return
++        path = filedialog.asksaveasfilename(defaultextension=".png", filetypes=[("PNG", "*.png")])
++        if path:
++            self.image.save(path)
++            messagebox.showinfo("Saved", f"Image saved to {path}")
++
++
++def main():
++    root = tk.Tk()
++    GeneratorApp(root)
++    root.mainloop()
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/voice_input.py b/voice_input.py
+new file mode 100644
+index 0000000..17321b6
+--- /dev/null
++++ b/voice_input.py
+@@ -0,0 +1,21 @@
++"""Voice command utilities using Whisper API (optional)."""
++
++import os
++
++try:
++    import openai
++except ImportError:  # pragma: no cover
++    openai = None
++
++
++def transcribe(path: str) -> str:
++    """Transcribe an audio file using OpenAI Whisper if available."""
++    if openai is None:
++        raise RuntimeError("openai package not installed")
++    api_key = os.getenv("OPENAI_API_KEY")
++    if not api_key:
++        raise RuntimeError("OPENAI_API_KEY not set")
++    with open(path, "rb") as f:
++        audio = f.read()
++    resp = openai.Audio.transcribe("whisper-1", audio)
++    return resp["text"]
